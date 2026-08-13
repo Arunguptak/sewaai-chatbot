@@ -1,14 +1,14 @@
 import streamlit as st
 import feedparser
 from urllib.parse import quote
-from datetime import datetime
+import html
 
 # ============================================================
 # PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
-    page_title="SewaAI | AI News Assistant",
+    page_title="SewaAI | Live News Assistant",
     page_icon="🤖",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -21,17 +21,18 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* ---------------------------------------------------------
-GLOBAL
---------------------------------------------------------- */
+/* ==========================================================
+   GLOBAL
+========================================================== */
 
 .stApp {
-    background: linear-gradient(
-        135deg,
-        #f8fafc 0%,
-        #eef4ff 50%,
-        #f8fafc 100%
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc 0%,
+            #eef4ff 50%,
+            #f8fafc 100%
+        );
 }
 
 .block-container {
@@ -40,43 +41,40 @@ GLOBAL
     padding-bottom: 7rem;
 }
 
-/* Remove Streamlit default spacing */
 
-div[data-testid="stVerticalBlock"] {
-    gap: 0.7rem;
-}
-
-/* ---------------------------------------------------------
-HEADER
---------------------------------------------------------- */
+/* ==========================================================
+   HEADER
+========================================================== */
 
 .sewa-header {
-    background: linear-gradient(
-        135deg,
-        #111827,
-        #1e3a8a
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #1e3a8a
+        );
 
-    padding: 22px 24px;
-    border-radius: 20px;
+    padding: 24px;
+
+    border-radius: 22px;
 
     color: white;
 
     box-shadow:
-        0 10px 30px rgba(30, 58, 138, 0.20);
+        0 12px 35px rgba(30, 58, 138, 0.20);
 
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .sewa-brand {
     display: flex;
     align-items: center;
-    gap: 13px;
+    gap: 14px;
 }
 
 .sewa-logo {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
 
     display: flex;
     align-items: center;
@@ -84,23 +82,29 @@ HEADER
 
     background: rgba(255,255,255,0.14);
 
-    border: 1px solid rgba(255,255,255,0.20);
+    border:
+        1px solid
+        rgba(255,255,255,0.20);
 
-    border-radius: 15px;
+    border-radius: 16px;
 
-    font-size: 28px;
+    font-size: 29px;
 }
 
 .sewa-name {
-    font-size: 28px;
+    font-size: 30px;
+
     font-weight: 800;
+
     letter-spacing: -0.5px;
 }
 
 .sewa-status {
     font-size: 12px;
-    margin-top: 3px;
-    opacity: 0.85;
+
+    margin-top: 4px;
+
+    opacity: 0.9;
 }
 
 .status-dot {
@@ -114,32 +118,94 @@ HEADER
     border-radius: 50%;
 
     margin-right: 6px;
+
+    box-shadow:
+        0 0 8px rgba(34,197,94,0.8);
 }
 
 .sewa-description {
-    margin-top: 14px;
+    margin-top: 15px;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    color:
+        rgba(255,255,255,0.82);
+}
+
+
+/* ==========================================================
+   WELCOME CARD
+========================================================== */
+
+.welcome-card {
+    background: white;
+
+    border:
+        1px solid
+        #e5e7eb;
+
+    border-radius: 20px;
+
+    padding: 26px;
+
+    text-align: center;
+
+    margin: 25px 0;
+
+    box-shadow:
+        0 8px 30px
+        rgba(15,23,42,0.05);
+}
+
+.welcome-icon {
+    font-size: 42px;
+}
+
+.welcome-title {
+    margin-top: 6px;
+
+    font-size: 23px;
+
+    font-weight: 800;
+
+    color: #111827;
+}
+
+.welcome-text {
+    margin-top: 7px;
+
+    color: #6b7280;
 
     font-size: 14px;
 
     line-height: 1.5;
-
-    color: rgba(255,255,255,0.82);
 }
 
-/* ---------------------------------------------------------
-CHAT USER MESSAGE
---------------------------------------------------------- */
+
+/* ==========================================================
+   USER MESSAGE
+========================================================== */
 
 .user-message {
-    background: #1d4ed8;
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
 
     color: white;
 
-    padding: 12px 16px;
+    padding: 13px 17px;
 
-    border-radius: 18px 18px 5px 18px;
+    border-radius:
+        18px 18px 5px 18px;
 
-    margin: 8px 0 14px auto;
+    margin:
+        10px 0
+        14px auto;
 
     max-width: 82%;
 
@@ -148,124 +214,149 @@ CHAT USER MESSAGE
     line-height: 1.5;
 
     box-shadow:
-        0 5px 15px rgba(29,78,216,0.15);
+        0 6px 18px
+        rgba(29,78,216,0.16);
 }
 
-/* ---------------------------------------------------------
-AI MESSAGE
---------------------------------------------------------- */
+
+/* ==========================================================
+   AI MESSAGE
+========================================================== */
 
 .ai-message {
     background: white;
 
     color: #111827;
 
-    padding: 14px 17px;
+    padding: 15px 17px;
 
-    border-radius: 18px 18px 18px 5px;
+    border-radius:
+        18px 18px 18px 5px;
 
-    margin: 8px auto 16px 0;
+    margin:
+        8px auto
+        16px 0;
 
-    max-width: 88%;
+    max-width: 90%;
 
-    border: 1px solid #e5e7eb;
+    border:
+        1px solid
+        #e5e7eb;
 
     box-shadow:
-        0 5px 20px rgba(15,23,42,0.05);
+        0 5px 20px
+        rgba(15,23,42,0.05);
 
     font-size: 14px;
 }
 
-/* ---------------------------------------------------------
-AI LABEL
---------------------------------------------------------- */
-
 .ai-label {
-    font-size: 12px;
-
     color: #1d4ed8;
 
-    font-weight: 700;
+    font-size: 12px;
+
+    font-weight: 800;
 
     margin-bottom: 7px;
 }
 
-/* ---------------------------------------------------------
-NEWS CARD
---------------------------------------------------------- */
+
+/* ==========================================================
+   NEWS CARD
+========================================================== */
 
 .news-card {
     background: white;
 
-    border: 1px solid #e5e7eb;
+    border:
+        1px solid
+        #e5e7eb;
 
     border-radius: 16px;
 
     padding: 16px;
 
-    margin: 10px 0;
-
-    transition: all 0.2s ease;
+    margin:
+        10px 0;
 
     box-shadow:
-        0 4px 15px rgba(15,23,42,0.04);
+        0 4px 15px
+        rgba(15,23,42,0.04);
+
+    transition:
+        all 0.2s ease;
 }
 
 .news-card:hover {
-    transform: translateY(-2px);
+    transform:
+        translateY(-2px);
+
+    border-color:
+        #bfdbfe;
 
     box-shadow:
-        0 8px 25px rgba(15,23,42,0.08);
+        0 9px 25px
+        rgba(15,23,42,0.08);
+}
 
-    border-color: #bfdbfe;
+.news-header {
+    display: flex;
+
+    align-items:
+        flex-start;
+
+    gap: 10px;
 }
 
 .news-number {
-    display: inline-flex;
+    min-width: 28px;
 
-    width: 28px;
     height: 28px;
 
+    display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    background: #eff6ff;
+    background:
+        #eff6ff;
 
-    color: #1d4ed8;
+    color:
+        #1d4ed8;
 
     border-radius: 8px;
 
     font-size: 12px;
 
-    font-weight: 700;
-
-    margin-right: 8px;
+    font-weight: 800;
 }
 
 .news-title {
-    display: inline;
-
     font-size: 16px;
 
     font-weight: 700;
 
-    color: #111827;
+    color:
+        #111827;
 
-    line-height: 1.4;
+    line-height: 1.45;
 }
 
 .news-meta {
-    margin-top: 9px;
+    margin-top: 10px;
 
     font-size: 12px;
 
-    color: #6b7280;
+    color:
+        #6b7280;
 }
 
 .news-source {
-    color: #1d4ed8;
+    color:
+        #1d4ed8;
 
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .read-button {
@@ -273,15 +364,19 @@ NEWS CARD
 
     margin-top: 12px;
 
-    padding: 7px 12px;
+    padding:
+        7px 12px;
 
     border-radius: 8px;
 
-    background: #eff6ff;
+    background:
+        #eff6ff;
 
-    color: #1d4ed8 !important;
+    color:
+        #1d4ed8 !important;
 
-    text-decoration: none !important;
+    text-decoration:
+        none !important;
 
     font-size: 12px;
 
@@ -289,78 +384,43 @@ NEWS CARD
 }
 
 .read-button:hover {
-    background: #dbeafe;
+    background:
+        #dbeafe;
 }
 
-/* ---------------------------------------------------------
-WELCOME CARD
---------------------------------------------------------- */
 
-.welcome-card {
-    background: white;
+/* ==========================================================
+   QUICK QUESTIONS
+========================================================== */
 
-    border: 1px solid #e5e7eb;
-
-    border-radius: 20px;
-
-    padding: 24px;
-
-    text-align: center;
-
-    margin: 25px 0;
-
-    box-shadow:
-        0 8px 30px rgba(15,23,42,0.05);
-}
-
-.welcome-icon {
-    font-size: 42px;
-
-    margin-bottom: 5px;
-}
-
-.welcome-title {
-    font-size: 22px;
-
-    font-weight: 800;
-
-    color: #111827;
-}
-
-.welcome-text {
-    color: #6b7280;
-
-    font-size: 14px;
-
-    margin-top: 7px;
-}
-
-/* ---------------------------------------------------------
-SECTION TITLE
---------------------------------------------------------- */
-
-.section-title {
+.quick-title {
     font-size: 14px;
 
     font-weight: 700;
 
     color: #374151;
 
-    margin: 18px 0 8px;
+    margin:
+        18px 0 10px;
 }
 
-/* ---------------------------------------------------------
-STREAMLIT BUTTONS
---------------------------------------------------------- */
+
+/* ==========================================================
+   STREAMLIT BUTTONS
+========================================================== */
 
 .stButton > button {
     border-radius: 10px;
 
-    border: 1px solid #dbe3ef;
+    border:
+        1px solid
+        #dbe3ef;
 
-    background: white;
+    background:
+        white;
 
-    color: #374151;
+    color:
+        #374151;
 
     font-size: 13px;
 
@@ -368,56 +428,67 @@ STREAMLIT BUTTONS
 
     min-height: 40px;
 
-    transition: all 0.2s ease;
+    transition:
+        all 0.2s ease;
 }
 
 .stButton > button:hover {
-    border-color: #93c5fd;
+    border-color:
+        #93c5fd;
 
-    color: #1d4ed8;
+    color:
+        #1d4ed8;
 
-    background: #eff6ff;
+    background:
+        #eff6ff;
 }
 
-/* ---------------------------------------------------------
-CHAT INPUT
---------------------------------------------------------- */
 
-.stChatInput {
-    border-radius: 16px !important;
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+section[data-testid="stSidebar"] {
+    background:
+        #f8fafc;
 }
 
-/* ---------------------------------------------------------
-MOBILE
---------------------------------------------------------- */
+
+/* ==========================================================
+   MOBILE
+========================================================== */
 
 @media (max-width: 600px) {
 
     .block-container {
-        padding: 10px 12px 100px;
+        padding:
+            10px
+            12px
+            100px;
     }
 
     .sewa-header {
         padding: 18px;
-        border-radius: 16px;
+
+        border-radius: 17px;
     }
 
     .sewa-name {
-        font-size: 24px;
+        font-size: 25px;
     }
 
     .sewa-logo {
-        width: 45px;
-        height: 45px;
-        font-size: 23px;
+        width: 46px;
+        height: 46px;
+        font-size: 24px;
     }
 
     .user-message {
-        max-width: 90%;
+        max-width: 92%;
     }
 
     .ai-message {
-        max-width: 94%;
+        max-width: 95%;
     }
 
     .news-card {
@@ -427,10 +498,12 @@ MOBILE
     .news-title {
         font-size: 14px;
     }
+
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 # ============================================================
 # HEADER
@@ -446,6 +519,7 @@ st.markdown("""
         </div>
 
         <div>
+
             <div class="sewa-name">
                 SewaAI
             </div>
@@ -454,6 +528,7 @@ st.markdown("""
                 <span class="status-dot"></span>
                 Live News Assistant
             </div>
+
         </div>
 
     </div>
@@ -466,6 +541,18 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+
+# ============================================================
+# SESSION STATE
+# ============================================================
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+if "quick_question" not in st.session_state:
+    st.session_state.quick_question = None
+
+
 # ============================================================
 # SIDEBAR
 # ============================================================
@@ -474,24 +561,55 @@ with st.sidebar:
 
     st.markdown("## 🤖 SewaAI")
 
-    st.markdown(
-        "### Quick Topics"
+    st.caption(
+        "Live AI & Technology News Assistant"
     )
 
-    if st.button("🤖 AI News", use_container_width=True):
-        st.session_state.quick_question = "Latest AI news"
+    st.divider()
 
-    if st.button("🇮🇳 India Technology", use_container_width=True):
-        st.session_state.quick_question = "Latest technology news in India"
+    st.markdown("### 🔎 Quick Topics")
 
-    if st.button("💻 Technology News", use_container_width=True):
-        st.session_state.quick_question = "Latest technology news"
+    if st.button(
+        "🤖 Latest AI News",
+        use_container_width=True
+    ):
+        st.session_state.quick_question = \
+            "Latest AI news"
 
-    if st.button("🧠 OpenAI News", use_container_width=True):
-        st.session_state.quick_question = "Latest OpenAI news"
+    if st.button(
+        "🇮🇳 India AI News",
+        use_container_width=True
+    ):
+        st.session_state.quick_question = \
+            "Latest AI news in India"
 
-    if st.button("🔵 Google AI News", use_container_width=True):
-        st.session_state.quick_question = "Latest Google AI news"
+    if st.button(
+        "💻 Technology News",
+        use_container_width=True
+    ):
+        st.session_state.quick_question = \
+            "Latest technology news"
+
+    if st.button(
+        "🧠 OpenAI News",
+        use_container_width=True
+    ):
+        st.session_state.quick_question = \
+            "Latest OpenAI news"
+
+    if st.button(
+        "🔵 Google AI News",
+        use_container_width=True
+    ):
+        st.session_state.quick_question = \
+            "Latest Google AI news"
+
+    if st.button(
+        "🏦 AI Banking News",
+        use_container_width=True
+    ):
+        st.session_state.quick_question = \
+            "Latest AI banking news"
 
     st.divider()
 
@@ -499,11 +617,20 @@ with st.sidebar:
         "🗑️ Clear Conversation",
         use_container_width=True
     ):
+
         st.session_state.messages = []
+
         st.rerun()
 
+    st.divider()
+
+    st.caption(
+        "Powered by Google News RSS + Streamlit"
+    )
+
+
 # ============================================================
-# NEWS FUNCTION
+# GOOGLE NEWS RSS
 # ============================================================
 
 @st.cache_data(ttl=300)
@@ -558,8 +685,9 @@ def get_news(query, limit=10):
 
     return articles
 
+
 # ============================================================
-# QUESTION PROCESSING
+# QUESTION → SEARCH QUERY
 # ============================================================
 
 def answer_question(question):
@@ -567,38 +695,129 @@ def answer_question(question):
     question_lower = question.lower()
 
     if "openai" in question_lower:
+
         search_query = "OpenAI"
 
     elif "chatgpt" in question_lower:
+
         search_query = "ChatGPT OpenAI"
 
+    elif "gemini" in question_lower:
+
+        search_query = "Google Gemini AI"
+
     elif "google" in question_lower:
+
         search_query = "Google AI"
 
     elif "microsoft" in question_lower:
+
         search_query = "Microsoft AI"
 
+    elif "bank" in question_lower:
+
+        search_query = "AI banking"
+
     elif "india" in question_lower:
+
         search_query = "India AI technology"
 
     elif "technology" in question_lower:
+
         search_query = "technology"
 
+    elif "business" in question_lower:
+
+        search_query = "technology business"
+
+    elif "startup" in question_lower:
+
+        search_query = "AI startup"
+
     elif "ai" in question_lower:
+
         search_query = "artificial intelligence"
 
     else:
+
         search_query = question
 
-    return get_news(search_query, 10)
+    return get_news(
+        search_query,
+        10
+    )
+
+
+# ============================================================
+# NEWS CARD
+# ============================================================
+
+def display_news(articles):
+
+    for index, article in enumerate(
+        articles,
+        start=1
+    ):
+
+        title = html.escape(
+            article["title"]
+        )
+
+        source = html.escape(
+            article["source"]
+        )
+
+        published = html.escape(
+            article["published"]
+        )
+
+        link = article["link"]
+
+        st.markdown(
+            f"""
+            <div class="news-card">
+
+                <div class="news-header">
+
+                    <div class="news-number">
+                        {index}
+                    </div>
+
+                    <div class="news-title">
+                        {title}
+                    </div>
+
+                </div>
+
+                <div class="news-meta">
+
+                    <span class="news-source">
+                        {source}
+                    </span>
+
+                    &nbsp; • &nbsp;
+
+                    {published}
+
+                </div>
+
+                <a
+                    href="{link}"
+                    target="_blank"
+                    class="read-button"
+                >
+                    🔗 Read Full Article →
+                </a>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
 
 # ============================================================
 # WELCOME SCREEN
 # ============================================================
-
-if "messages" not in st.session_state:
-
-    st.session_state.messages = []
 
 if len(st.session_state.messages) == 0:
 
@@ -614,16 +833,16 @@ if len(st.session_state.messages) == 0:
         </div>
 
         <div class="welcome-text">
-            Your intelligent news assistant.
+            Your intelligent live-news assistant.
             Ask me about AI, technology,
-            India and the latest news.
+            India, startups, banking and more.
         </div>
 
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown(
-        '<div class="section-title">Try asking</div>',
+        '<div class="quick-title">💡 Try asking</div>',
         unsafe_allow_html=True
     )
 
@@ -635,8 +854,11 @@ if len(st.session_state.messages) == 0:
             "🤖 Latest AI News",
             use_container_width=True
         ):
+
             st.session_state.quick_question = \
                 "Latest AI news"
+
+            st.rerun()
 
     with col2:
 
@@ -644,11 +866,15 @@ if len(st.session_state.messages) == 0:
             "🇮🇳 India AI News",
             use_container_width=True
         ):
+
             st.session_state.quick_question = \
                 "Latest AI news in India"
 
+            st.rerun()
+
+
 # ============================================================
-# DISPLAY CHAT HISTORY
+# CHAT HISTORY
 # ============================================================
 
 for message in st.session_state.messages:
@@ -658,13 +884,13 @@ for message in st.session_state.messages:
         st.markdown(
             f"""
             <div class="user-message">
-                {message["content"]}
+                {html.escape(message["content"])}
             </div>
             """,
             unsafe_allow_html=True
         )
 
-    else:
+    elif message["role"] == "assistant":
 
         st.markdown(
             """
@@ -675,72 +901,39 @@ for message in st.session_state.messages:
                 </div>
 
                 Here are the latest news results:
+                
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        for index, article in enumerate(
-            message["articles"],
-            start=1
-        ):
+        if message["articles"]:
 
-            st.markdown(
-                f"""
-                <div class="news-card">
-
-                    <div>
-                        <span class="news-number">
-                            {index}
-                        </span>
-
-                        <span class="news-title">
-                            {article['title']}
-                        </span>
-                    </div>
-
-                    <div class="news-meta">
-
-                        <span class="news-source">
-                            {article['source']}
-                        </span>
-
-                        &nbsp; • &nbsp;
-
-                        {article['published']}
-
-                    </div>
-
-                    <a
-                        href="{article['link']}"
-                        target="_blank"
-                        class="read-button"
-                    >
-                        🔗 Read Full Article →
-                    </a>
-
-                </div>
-                """,
-                unsafe_allow_html=True
+            display_news(
+                message["articles"]
             )
 
+
 # ============================================================
-# QUESTION INPUT
+# CHAT INPUT
 # ============================================================
 
 question = st.chat_input(
     "Ask SewaAI about the latest news..."
 )
 
+
 # ============================================================
 # QUICK QUESTION
 # ============================================================
 
-if "quick_question" in st.session_state:
+if st.session_state.quick_question:
 
-    question = st.session_state.quick_question
+    question = \
+        st.session_state.quick_question
 
-    del st.session_state.quick_question
+    st.session_state.quick_question = None
+
 
 # ============================================================
 # PROCESS QUESTION
@@ -760,14 +953,14 @@ if question:
     st.markdown(
         f"""
         <div class="user-message">
-            {question}
+            {html.escape(question)}
         </div>
         """,
         unsafe_allow_html=True
     )
 
     # --------------------------------------------------------
-    # AI RESPONSE
+    # SEARCH
     # --------------------------------------------------------
 
     with st.spinner(
@@ -776,16 +969,28 @@ if question:
 
         try:
 
-            articles = answer_question(question)
+            articles = answer_question(
+                question
+            )
 
             if not articles:
 
-                st.warning(
-                    "No news articles found. "
-                    "Try another question."
-                )
+                st.markdown(
+                    """
+                    <div class="ai-message">
 
-                articles = []
+                        <div class="ai-label">
+                            🤖 SewaAI
+                        </div>
+
+                        Sorry, I couldn't find
+                        relevant news articles.
+                        Try another question.
+
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
             else:
 
@@ -798,61 +1003,22 @@ if question:
                         </div>
 
                         Found
-                        <strong>{len(articles)}</strong>
-                        latest news articles for you.
+                        <strong>
+                            {len(articles)}
+                        </strong>
+                        latest news articles.
+
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
-                for index, article in enumerate(
-                    articles,
-                    start=1
-                ):
-
-                    st.markdown(
-                        f"""
-                        <div class="news-card">
-
-                            <div>
-
-                                <span class="news-number">
-                                    {index}
-                                </span>
-
-                                <span class="news-title">
-                                    {article['title']}
-                                </span>
-
-                            </div>
-
-                            <div class="news-meta">
-
-                                <span class="news-source">
-                                    {article['source']}
-                                </span>
-
-                                &nbsp; • &nbsp;
-
-                                {article['published']}
-
-                            </div>
-
-                            <a
-                                href="{article['link']}"
-                                target="_blank"
-                                class="read-button"
-                            >
-                                🔗 Read Full Article →
-                            </a>
-
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                display_news(
+                    articles
+                )
 
             # ------------------------------------------------
-            # SAVE RESPONSE
+            # SAVE
             # ------------------------------------------------
 
             st.session_state.messages.append({
@@ -863,5 +1029,6 @@ if question:
         except Exception as e:
 
             st.error(
-                f"⚠️ Unable to fetch news: {e}"
+                "⚠️ Unable to fetch news. "
+                f"Error: {e}"
             )
