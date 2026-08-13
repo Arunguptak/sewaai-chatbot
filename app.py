@@ -7,7 +7,7 @@ from urllib.parse import quote
 # ============================================================
 
 st.set_page_config(
-    page_title="SewaAI News Assistant",
+    page_title="SewaAI",
     page_icon="🤖",
     layout="centered"
 )
@@ -61,12 +61,12 @@ st.markdown("""
 # ============================================================
 
 st.markdown(
-    '<div class="sewa-title">🤖 SewaAI News Assistant</div>',
+    '<div class="sewa-title">🤖 SewaAI </div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="sewa-subtitle">Ask about the latest AI & Technology news</div>',
+    '<div class="sewa-subtitle">Ask SewaAI anything...</div>',
     unsafe_allow_html=True
 )
 
