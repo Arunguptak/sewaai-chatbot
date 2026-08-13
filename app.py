@@ -88,8 +88,8 @@ st.markdown(
 # API URL
 # ============================================================
 
-API_URL = st.secrets["SEWAAI_API_URL"]
-SEWAAI_API_URL = "https://sewaai-chatbot-j9jwbydrsknabxbtlnpb22.streamlit.app/ask"
+API_URL = ""
+
 
 
 # ============================================================
