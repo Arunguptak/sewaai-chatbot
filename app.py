@@ -19,7 +19,7 @@ st.set_page_config(
 # PROFESSIONAL CSS
 # ============================================================
 
-st.markdown("""
+st.html("""
 <style>
 
 /* ---------------------------------------------------------
@@ -431,14 +431,14 @@ div[data-testid="stVerticalBlock"] {
 }
 
 </style>
-""", unsafe_allow_html=True)
+""")
 
 
 # ============================================================
 # HEADER
 # ============================================================
 
-st.markdown("""
+st.html("""
 <div class="sewa-header">
 
     <div class="sewa-brand">
@@ -466,7 +466,7 @@ st.markdown("""
     </div>
 
 </div>
-""", unsafe_allow_html=True)
+""")
 
 
 # ============================================================
@@ -477,9 +477,7 @@ with st.sidebar:
 
     st.markdown("## 🤖 SewaAI")
 
-    st.markdown(
-        "### Quick Topics"
-    )
+    st.markdown("### Quick Topics")
 
     if st.button("🤖 AI News", use_container_width=True):
         st.session_state.quick_question = "Latest AI news"
@@ -611,7 +609,7 @@ if "quick_question" not in st.session_state:
 
 if len(st.session_state.messages) == 0:
 
-    st.markdown("""
+    st.html("""
     <div class="welcome-card">
 
         <div class="welcome-icon">
@@ -629,12 +627,10 @@ if len(st.session_state.messages) == 0:
         </div>
 
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown(
-        '<div class="section-title">Try asking</div>',
-        unsafe_allow_html=True
-    )
+    st.html(
+        '<div class="section-title">Try asking</div>')
 
     col1, col2 = st.columns(2)
 
@@ -665,18 +661,16 @@ for message in st.session_state.messages:
 
     if message["role"] == "user":
 
-        st.markdown(
+        st.html(
             f"""
             <div class="user-message">
                 {escape(str(message["content"]))}
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+            """)
 
     else:
 
-        st.markdown(
+        st.html(
             """
             <div class="ai-message">
 
@@ -686,16 +680,14 @@ for message in st.session_state.messages:
 
                 Here are the latest news results:
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+            """)
 
         for index, article in enumerate(
             message["articles"],
             start=1
         ):
 
-            st.markdown(
+            st.html(
                 f"""
                 <div class="news-card">
 
@@ -730,9 +722,7 @@ for message in st.session_state.messages:
                     </a>
 
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+                """)
 
 
 # ============================================================
@@ -768,14 +758,12 @@ if question:
         "content": question
     })
 
-    st.markdown(
+    st.html(
         f"""
         <div class="user-message">
             {escape(str(question))}
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+        """)
 
     # --------------------------------------------------------
     # AI RESPONSE
@@ -800,7 +788,7 @@ if question:
 
             else:
 
-                st.markdown(
+                st.html(
                     f"""
                     <div class="ai-message">
 
@@ -812,16 +800,14 @@ if question:
                         <strong>{len(articles)}</strong>
                         latest news articles for you.
                     </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                    """)
 
                 for index, article in enumerate(
                     articles,
                     start=1
                 ):
 
-                    st.markdown(
+                    st.html(
                         f"""
                         <div class="news-card">
 
@@ -858,9 +844,7 @@ if question:
                             </a>
 
                         </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                        """)
 
             # ------------------------------------------------
             # SAVE RESPONSE
