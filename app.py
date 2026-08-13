@@ -22,7 +22,7 @@ st.markdown("""
 <style>
 
 /* ---------------------------------------------------------
-   GLOBAL
+GLOBAL
 --------------------------------------------------------- */
 
 .stApp {
@@ -47,7 +47,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   HEADER
+HEADER
 --------------------------------------------------------- */
 
 .sewa-header {
@@ -127,7 +127,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   CHAT USER MESSAGE
+CHAT USER MESSAGE
 --------------------------------------------------------- */
 
 .user-message {
@@ -152,7 +152,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   AI MESSAGE
+AI MESSAGE
 --------------------------------------------------------- */
 
 .ai-message {
@@ -177,7 +177,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   AI LABEL
+AI LABEL
 --------------------------------------------------------- */
 
 .ai-label {
@@ -191,7 +191,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   NEWS CARD
+NEWS CARD
 --------------------------------------------------------- */
 
 .news-card {
@@ -293,7 +293,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   WELCOME CARD
+WELCOME CARD
 --------------------------------------------------------- */
 
 .welcome-card {
@@ -336,7 +336,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   SECTION TITLE
+SECTION TITLE
 --------------------------------------------------------- */
 
 .section-title {
@@ -350,7 +350,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   STREAMLIT BUTTONS
+STREAMLIT BUTTONS
 --------------------------------------------------------- */
 
 .stButton > button {
@@ -380,7 +380,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   CHAT INPUT
+CHAT INPUT
 --------------------------------------------------------- */
 
 .stChatInput {
@@ -388,7 +388,7 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* ---------------------------------------------------------
-   MOBILE
+MOBILE
 --------------------------------------------------------- */
 
 @media (max-width: 600px) {
@@ -432,7 +432,6 @@ div[data-testid="stVerticalBlock"] {
 </style>
 """, unsafe_allow_html=True)
 
-
 # ============================================================
 # HEADER
 # ============================================================
@@ -466,7 +465,6 @@ st.markdown("""
 
 </div>
 """, unsafe_allow_html=True)
-
 
 # ============================================================
 # SIDEBAR
@@ -503,7 +501,6 @@ with st.sidebar:
     ):
         st.session_state.messages = []
         st.rerun()
-
 
 # ============================================================
 # NEWS FUNCTION
@@ -561,7 +558,6 @@ def get_news(query, limit=10):
 
     return articles
 
-
 # ============================================================
 # QUESTION PROCESSING
 # ============================================================
@@ -596,7 +592,6 @@ def answer_question(question):
 
     return get_news(search_query, 10)
 
-
 # ============================================================
 # WELCOME SCREEN
 # ============================================================
@@ -604,7 +599,6 @@ def answer_question(question):
 if "messages" not in st.session_state:
 
     st.session_state.messages = []
-
 
 if len(st.session_state.messages) == 0:
 
@@ -652,7 +646,6 @@ if len(st.session_state.messages) == 0:
         ):
             st.session_state.quick_question = \
                 "Latest AI news in India"
-
 
 # ============================================================
 # DISPLAY CHAT HISTORY
@@ -731,7 +724,6 @@ for message in st.session_state.messages:
                 unsafe_allow_html=True
             )
 
-
 # ============================================================
 # QUESTION INPUT
 # ============================================================
@@ -739,7 +731,6 @@ for message in st.session_state.messages:
 question = st.chat_input(
     "Ask SewaAI about the latest news..."
 )
-
 
 # ============================================================
 # QUICK QUESTION
@@ -750,7 +741,6 @@ if "quick_question" in st.session_state:
     question = st.session_state.quick_question
 
     del st.session_state.quick_question
-
 
 # ============================================================
 # PROCESS QUESTION
