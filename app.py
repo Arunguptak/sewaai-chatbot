@@ -797,23 +797,7 @@ if len(st.session_state.messages) == 0:
             🤖
         </div>
 
-        <div class="welcome-title">
-            Welcome to SewaAI
-        </div>
-
-        <div class="welcome-text">
-            Your intelligent live-news assistant.
-            Ask me about AI, technology,
-            India, startups, banking and more.
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown(
-        '<div class="quick-title">💡 Try asking</div>',
-        unsafe_allow_html=True
-    )
+       
 
     col1, col2 = st.columns(2)
 
