@@ -1,263 +1,276 @@
 import streamlit as st
-import requests
+import feedparser
+from urllib.parse import quote
 
 # ============================================================
 # PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
-    page_title="SewaAI",
+    page_title="SewaAI News Assistant",
     page_icon="🤖",
     layout="centered"
 )
-
 
 # ============================================================
 # CSS
 # ============================================================
 
-st.markdown(
-    """
-    <style>
+st.markdown("""
+<style>
 
-    .main {
-        max-width: 900px;
-        margin: auto;
-    }
+.main {
+    max-width: 900px;
+    margin: auto;
+}
 
-    .sewa-title {
-        text-align: center;
-        font-size: 30px;
-        font-weight: 700;
-        margin-bottom: 2px;
-    }
+.sewa-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+}
 
-    .sewa-subtitle {
-        text-align: center;
-        font-size: 13px;
-        color: #64748b;
-        margin-bottom: 20px;
-    }
+.sewa-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
+}
 
-    .source-box {
-        font-size: 12px;
-    }
+.news-card {
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}
 
-    @media (max-width: 600px) {
+.news-title {
+    font-size: 18px;
+    font-weight: 600;
+}
 
-        .sewa-title {
-            font-size: 23px;
-        }
+.news-source {
+    font-size: 13px;
+    color: #777;
+}
 
-        .sewa-subtitle {
-            font-size: 11px;
-        }
-
-        .main {
-            padding: 5px;
-        }
-
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
+</style>
+""", unsafe_allow_html=True)
 
 # ============================================================
 # HEADER
 # ============================================================
 
 st.markdown(
-    """
-    <div class="sewa-title">
-        🤖 SewaAI
-    </div>
-
-    <div class="sewa-subtitle">
-        Your Smart Learning Assistant<br>
-        AI • GenAI • Data • Databricks • Cloud
-    </div>
-    """,
+    '<div class="sewa-title">🤖 SewaAI News Assistant</div>',
     unsafe_allow_html=True
 )
 
-
-# ============================================================
-# API URL
-# ============================================================
-
-API_URL = st.secrets.get(
-    "SEWAAI_API_URL",
-    ""
+st.markdown(
+    '<div class="sewa-subtitle">Ask about the latest AI & Technology news</div>',
+    unsafe_allow_html=True
 )
 
-st.write("API configured:", bool(API_URL))
+# ============================================================
+# NEWS FUNCTION
+# ============================================================
 
+def get_news(query, limit=10):
+
+    encoded_query = quote(query)
+
+    rss_url = (
+        "https://news.google.com/rss/search?"
+        f"q={encoded_query}&hl=en-IN&gl=IN&ceid=IN:en"
+    )
+
+    feed = feedparser.parse(rss_url)
+
+    articles = []
+
+    for entry in feed.entries[:limit]:
+
+        title = entry.get("title", "No title")
+
+        link = entry.get("link", "")
+
+        published = entry.get(
+            "published",
+            "Date unavailable"
+        )
+
+        source = "Google News"
+
+        if hasattr(entry, "source"):
+            source = entry.source.get(
+                "title",
+                "Google News"
+            )
+
+        articles.append({
+            "title": title,
+            "link": link,
+            "published": published,
+            "source": source
+        })
+
+    return articles
 
 
 # ============================================================
-# SESSION
+# ANSWER FUNCTION
+# ============================================================
+
+def answer_question(question):
+
+    question_lower = question.lower()
+
+    # Determine search topic
+
+    if "openai" in question_lower:
+        search_query = "OpenAI"
+
+    elif "google" in question_lower:
+        search_query = "Google AI"
+
+    elif "microsoft" in question_lower:
+        search_query = "Microsoft AI"
+
+    elif "india" in question_lower:
+        search_query = "India AI technology"
+
+    elif "technology" in question_lower:
+        search_query = "technology"
+
+    elif "ai" in question_lower:
+        search_query = "artificial intelligence"
+
+    else:
+        search_query = question
+
+    articles = get_news(search_query, 10)
+
+    return articles
+
+
+# ============================================================
+# CHAT HISTORY
 # ============================================================
 
 if "messages" not in st.session_state:
-
     st.session_state.messages = []
 
-
-# ============================================================
-# DISPLAY CHAT
-# ============================================================
 
 for message in st.session_state.messages:
 
     with st.chat_message(message["role"]):
 
-        st.markdown(message["content"])
+        if message["role"] == "user":
+
+            st.write(message["content"])
+
+        else:
+
+            for article in message["articles"]:
+
+                st.markdown(
+                    f"""
+                    <div class="news-card">
+
+                    <div class="news-title">
+                    📰 {article['title']}
+                    </div>
+
+                    <div class="news-source">
+                    {article['source']} • {article['published']}
+                    </div>
+
+                    <br>
+
+                    <a href="{article['link']}" target="_blank">
+                    🔗 Read Full Article
+                    </a>
+
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
 
 # ============================================================
-# USER QUESTION
+# CHAT INPUT
 # ============================================================
 
 question = st.chat_input(
-    "Ask SewaAI anything..."
+    "Ask about latest news..."
 )
 
 
-# ============================================================
-# ASK SEWAAI
-# ============================================================
-
 if question:
 
-    # --------------------------------------------------------
     # User message
-    # --------------------------------------------------------
 
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": question
-        }
-    )
+    st.session_state.messages.append({
+        "role": "user",
+        "content": question
+    })
 
     with st.chat_message("user"):
+        st.write(question)
 
-        st.markdown(question)
-
-
-    # --------------------------------------------------------
-    # Assistant
-    # --------------------------------------------------------
+    # Assistant response
 
     with st.chat_message("assistant"):
 
-        with st.spinner("SewaAI is thinking..."):
+        with st.spinner("🔎 Searching latest news..."):
 
             try:
 
-                response = requests.post(
-                    API_URL,
-                    json={
-                        "question": question
-                    },
-                    timeout=90
-                )
+                articles = answer_question(question)
 
-                response.raise_for_status()
+                if not articles:
 
-                result = response.json()
+                    st.warning(
+                        "No news articles found."
+                    )
 
-                answer = result.get(
-                    "answer",
-                    "No answer returned."
-                )
+                else:
 
-                sources = result.get(
-                    "sources",
-                    []
-                )
+                    st.success(
+                        f"Found {len(articles)} latest articles."
+                    )
 
+                    for article in articles:
 
-                # ------------------------------------------------
-                # Answer
-                # ------------------------------------------------
+                        st.markdown(
+                            f"""
+                            <div class="news-card">
 
-                st.markdown(answer)
+                            <div class="news-title">
+                            📰 {article['title']}
+                            </div>
 
+                            <div class="news-source">
+                            {article['source']} • {article['published']}
+                            </div>
 
-                # ------------------------------------------------
-                # Sources
-                # ------------------------------------------------
+                            <br>
 
-                if sources:
+                            <a href="{article['link']}" target="_blank">
+                            🔗 Read Full Article
+                            </a>
 
-                    with st.expander(
-                        "📚 Sources"
-                    ):
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
 
-                        for i, source in enumerate(
-                            sources[:5],
-                            start=1
-                        ):
-
-                            source_name = source.get(
-                                "source_name",
-                                "Unknown"
-                            )
-
-                            title = source.get(
-                                "title",
-                                ""
-                            )
-
-                            url = source.get(
-                                "url",
-                                ""
-                            )
-
-                            st.markdown(
-                                f"**{i}. {source_name}**"
-                            )
-
-                            if title:
-
-                                st.write(title)
-
-                            if url:
-
-                                st.markdown(
-                                    f"[🔗 Read source]({url})"
-                                )
-
-
-                # ------------------------------------------------
-                # Save assistant response
-                # ------------------------------------------------
-
-                st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": answer
-                    }
-                )
-
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "articles": articles
+                })
 
             except Exception as e:
 
-                error_message = (
-                    "❌ **SewaAI Connection Error**\n\n"
-                    "The backend did not return a response.\n\n"
-                    f"`{str(e)}`"
-                )
-
-                st.error(error_message)
-
-                st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": error_message
-                    }
+                st.error(
+                    f"Something went wrong: {e}"
                 )
