@@ -2,6 +2,7 @@ import streamlit as st
 import feedparser
 from urllib.parse import quote
 from datetime import datetime
+from html import escape
 
 # ============================================================
 # PAGE CONFIG
@@ -18,7 +19,7 @@ st.set_page_config(
 # PROFESSIONAL CSS
 # ============================================================
 
-st.html("""
+st.markdown("""
 <style>
 
 /* ---------------------------------------------------------
@@ -437,7 +438,7 @@ div[data-testid="stVerticalBlock"] {
 # HEADER
 # ============================================================
 
-st.html("""
+st.markdown("""
 <div class="sewa-header">
 
     <div class="sewa-brand">
@@ -474,9 +475,9 @@ st.html("""
 
 with st.sidebar:
 
-    st.html("## 🤖 SewaAI")
+    st.markdown("## 🤖 SewaAI")
 
-    st.html(
+    st.markdown(
         "### Quick Topics"
     )
 
@@ -602,13 +603,15 @@ def answer_question(question):
 # ============================================================
 
 if "messages" not in st.session_state:
-
     st.session_state.messages = []
+
+if "quick_question" not in st.session_state:
+    st.session_state.quick_question = None
 
 
 if len(st.session_state.messages) == 0:
 
-    st.html("""
+    st.markdown("""
     <div class="welcome-card">
 
         <div class="welcome-icon">
@@ -628,7 +631,7 @@ if len(st.session_state.messages) == 0:
     </div>
     """, unsafe_allow_html=True)
 
-    st.html(
+    st.markdown(
         '<div class="section-title">Try asking</div>',
         unsafe_allow_html=True
     )
@@ -662,10 +665,10 @@ for message in st.session_state.messages:
 
     if message["role"] == "user":
 
-        st.html(
+        st.markdown(
             f"""
             <div class="user-message">
-                {message["content"]}
+                {escape(str(message["content"]))}
             </div>
             """,
             unsafe_allow_html=True
@@ -673,7 +676,7 @@ for message in st.session_state.messages:
 
     else:
 
-        st.html(
+        st.markdown(
             """
             <div class="ai-message">
 
@@ -692,7 +695,7 @@ for message in st.session_state.messages:
             start=1
         ):
 
-            st.html(
+            st.markdown(
                 f"""
                 <div class="news-card">
 
@@ -702,24 +705,24 @@ for message in st.session_state.messages:
                         </span>
 
                         <span class="news-title">
-                            {article['title']}
+                            {escape(str(article['title']))}
                         </span>
                     </div>
 
                     <div class="news-meta">
 
                         <span class="news-source">
-                            {article['source']}
+                            {escape(str(article['source']))}
                         </span>
 
                         &nbsp; • &nbsp;
 
-                        {article['published']}
+                        {escape(str(article['published']))}
 
                     </div>
 
                     <a
-                        href="{article['link']}"
+                        href="{escape(str(article['link']), quote=True)}"
                         target="_blank"
                         class="read-button"
                     >
@@ -745,11 +748,9 @@ question = st.chat_input(
 # QUICK QUESTION
 # ============================================================
 
-if "quick_question" in st.session_state:
-
+if st.session_state.quick_question:
     question = st.session_state.quick_question
-
-    del st.session_state.quick_question
+    st.session_state.quick_question = None
 
 
 # ============================================================
@@ -767,10 +768,10 @@ if question:
         "content": question
     })
 
-    st.html(
+    st.markdown(
         f"""
         <div class="user-message">
-            {question}
+            {escape(str(question))}
         </div>
         """,
         unsafe_allow_html=True
@@ -799,7 +800,7 @@ if question:
 
             else:
 
-                st.html(
+                st.markdown(
                     f"""
                     <div class="ai-message">
 
@@ -820,7 +821,7 @@ if question:
                     start=1
                 ):
 
-                    st.html(
+                    st.markdown(
                         f"""
                         <div class="news-card">
 
@@ -831,7 +832,7 @@ if question:
                                 </span>
 
                                 <span class="news-title">
-                                    {article['title']}
+                                    {escape(str(article['title']))}
                                 </span>
 
                             </div>
@@ -839,17 +840,17 @@ if question:
                             <div class="news-meta">
 
                                 <span class="news-source">
-                                    {article['source']}
+                                    {escape(str(article['source']))}
                                 </span>
 
                                 &nbsp; • &nbsp;
 
-                                {article['published']}
+                                {escape(str(article['published']))}
 
                             </div>
 
                             <a
-                                href="{article['link']}"
+                                href="{escape(str(article['link']), quote=True)}"
                                 target="_blank"
                                 class="read-button"
                             >
