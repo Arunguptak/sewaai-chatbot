@@ -509,35 +509,6 @@ section[data-testid="stSidebar"] {
 # HEADER
 # ============================================================
 
-st.markdown("""
-<div class="sewa-header">
-
-    <div class="sewa-brand">
-
-        <div class="sewa-logo">
-            🤖
-        </div>
-
-        <div>
-
-            <div class="sewa-name">
-                SewaAI
-            </div>
-
-            <div class="sewa-status">
-                <span class="status-dot"></span>
-                Live News Assistant
-            </div>
-
-     
-
-    <div class="sewa-description">
-        Ask questions and discover the latest AI,
-        technology and India news from live news sources.
-    </div>
-
-</div>
-""", unsafe_allow_html=True)
 
 
 # ============================================================
