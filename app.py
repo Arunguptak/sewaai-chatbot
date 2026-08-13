@@ -88,7 +88,25 @@ st.markdown(
 # API URL
 # ============================================================
 
-API_URL =""
+if not API_URL:
+
+    st.error(
+        "⚠️ SewaAI API is not configured yet."
+    )
+
+else:
+
+    response = requests.post(
+        API_URL,
+        json={
+            "question": question
+        },
+        timeout=90
+    )
+
+    response.raise_for_status()
+
+    result = response.json()
 
 
 # ============================================================
