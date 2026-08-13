@@ -539,7 +539,7 @@ st.markdown("""
     </div>
 
 </div>
-""", unsafe_allow_html=False)
+""", unsafe_allow_html=True)
 
 
 # ============================================================
