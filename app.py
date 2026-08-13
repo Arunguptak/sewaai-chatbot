@@ -18,7 +18,7 @@ st.set_page_config(
 # PROFESSIONAL CSS
 # ============================================================
 
-st.markdown("""
+st.html("""
 <style>
 
 /* ---------------------------------------------------------
@@ -474,9 +474,9 @@ st.html("""
 
 with st.sidebar:
 
-    st.markdown("## 🤖 SewaAI")
+    st.html("## 🤖 SewaAI")
 
-    st.markdown(
+    st.html(
         "### Quick Topics"
     )
 
@@ -608,7 +608,7 @@ if "messages" not in st.session_state:
 
 if len(st.session_state.messages) == 0:
 
-    st.markdown("""
+    st.html("""
     <div class="welcome-card">
 
         <div class="welcome-icon">
@@ -628,7 +628,7 @@ if len(st.session_state.messages) == 0:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(
+    st.html(
         '<div class="section-title">Try asking</div>',
         unsafe_allow_html=True
     )
@@ -662,7 +662,7 @@ for message in st.session_state.messages:
 
     if message["role"] == "user":
 
-        st.markdown(
+        st.html(
             f"""
             <div class="user-message">
                 {message["content"]}
@@ -673,7 +673,7 @@ for message in st.session_state.messages:
 
     else:
 
-        st.markdown(
+        st.html(
             """
             <div class="ai-message">
 
@@ -692,7 +692,7 @@ for message in st.session_state.messages:
             start=1
         ):
 
-            st.markdown(
+            st.html(
                 f"""
                 <div class="news-card">
 
@@ -767,7 +767,7 @@ if question:
         "content": question
     })
 
-    st.markdown(
+    st.html(
         f"""
         <div class="user-message">
             {question}
@@ -799,7 +799,7 @@ if question:
 
             else:
 
-                st.markdown(
+                st.html(
                     f"""
                     <div class="ai-message">
 
@@ -820,7 +820,7 @@ if question:
                     start=1
                 ):
 
-                    st.markdown(
+                    st.html(
                         f"""
                         <div class="news-card">
 
