@@ -88,7 +88,12 @@ st.markdown(
 # API URL
 # ============================================================
 
-API_URL = ""
+API_URL = st.secrets.get(
+    "SEWAAI_API_URL",
+    ""
+)
+
+st.write("API configured:", bool(API_URL))
 
 
 
