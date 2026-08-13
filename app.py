@@ -437,7 +437,7 @@ div[data-testid="stVerticalBlock"] {
 # HEADER
 # ============================================================
 
-st.markdown("""
+st.html("""
 <div class="sewa-header">
 
     <div class="sewa-brand">
