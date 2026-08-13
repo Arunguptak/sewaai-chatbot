@@ -529,9 +529,7 @@ st.markdown("""
                 Live News Assistant
             </div>
 
-        </div>
-
-    </div>
+     
 
     <div class="sewa-description">
         Ask questions and discover the latest AI,
