@@ -88,25 +88,8 @@ st.markdown(
 # API URL
 # ============================================================
 
-if not API_URL:
-
-    st.error(
-        "⚠️ SewaAI API is not configured yet."
-    )
-
-else:
-
-    response = requests.post(
-        API_URL,
-        json={
-            "question": question
-        },
-        timeout=90
-    )
-
-    response.raise_for_status()
-
-    result = response.json()
+API_URL = st.secrets["SEWAAI_API_URL"]
+SEWAAI_API_URL = "https://sewaai-chatbot-j9jwbydrsknabxbtlnpb22.streamlit.app/ask"
 
 
 # ============================================================
