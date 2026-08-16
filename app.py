@@ -482,7 +482,7 @@ with st.sidebar:
     if st.button("🤖 AI News", use_container_width=True):
         st.session_state.quick_question = "Latest AI news"
 
-    if st.button("🇮🇳 India Technology", use_container_width=True):
+    if st.button("## 🇮🇳 India Technology", use_container_width=True):
         st.session_state.quick_question = "Latest technology news in India"
 
     if st.button("💻 Technology News", use_container_width=True):
